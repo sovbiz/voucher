@@ -1,6 +1,6 @@
 {
-  "name": "Withdraw Links",
-  "short_description": "Make LNURL withdraw links",
+  "name": "Voucher Links",
+  "short_description": "Make Voucher withdraw links",
   "tile": "/withdraw/static/image/lnurl-withdraw.png",
   "min_lnbits_version": "0.12.5",
   "contributors": [
