@@ -2,8 +2,8 @@
   "repos": [
     {
       "id": "withdraw",
-      "organisation": "lnbits",
-      "repository": "withdraw"
+      "organisation": "sovbiz",
+      "repository": "voucher"
     }
   ]
 }
