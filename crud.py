@@ -73,6 +73,28 @@ async def get_withdraw_link(link_id: str, num=0) -> Optional[WithdrawLink]:
 
     return WithdrawLink.parse_obj(link)
 
+async def get_withdraw_link_by_title(title: str, limit: int, offset: int) -> Tuple[List[WithdrawLink], int]:
+    # Query to find links where the title matches the search term (case-insensitive)
+    rows = await db.fetchall(
+        """
+        SELECT * FROM withdraw.withdraw_link
+        WHERE title ILIKE ?
+        ORDER BY open_time DESC
+        LIMIT ? OFFSET ?
+        """,
+        (f"%{title}%", limit, offset)
+    )
+
+    # Query to count the total number of matching records
+    total = await db.fetchone(
+        """
+        SELECT COUNT(*) as total FROM withdraw.withdraw_link
+        WHERE title ILIKE ?
+        """,
+        (f"%{title}%",)
+    )
+
+    return [WithdrawLink(**row) for row in rows], total["total"]
 
 async def get_withdraw_link_by_hash(unique_hash: str, num=0) -> Optional[WithdrawLink]:
     row = await db.fetchone(

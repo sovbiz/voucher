@@ -14,10 +14,36 @@ from .crud import (
     get_withdraw_link,
     get_withdraw_links,
     update_withdraw_link,
+    get_withdraw_link_by_title,
 )
 from .models import CreateWithdrawData
 
 withdraw_ext_api = APIRouter(prefix="/api/v1")
+
+
+@withdraw_ext_api.get("/links/bytitle", status_code=HTTPStatus.OK)
+async def api_links_by_title(
+    req: Request,
+    title: str = Query(...),  # Title is a required query parameter
+    offset: int = Query(0),
+    limit: int = Query(10),  # Set a default limit if none is provided
+    wallet: WalletTypeInfo = Depends(get_key_type),
+):
+    try:
+        # Call the new `get_withdraw_link_by_title` function
+        links, total = await get_withdraw_link_by_title(title, limit, offset)
+        
+        # Return the list of matching links and the total count
+        return {
+            "data": [{**link.dict(), **{"lnurl": link.lnurl(req)}} for link in links],
+            "total": total,
+        }
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail="An error occurred while retrieving links by title.",
+        ) from exc
 
 
 @withdraw_ext_api.get("/links", status_code=HTTPStatus.OK)
